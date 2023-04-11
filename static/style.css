@@ -1,0 +1,16 @@
+#create_todo {
+    padding: 20px;
+    margin: 10px;
+    background-color: antiquewhite;
+}
+
+.todo {
+    padding: 25px;
+    margin: 15px;
+    background-color: #7fffd4;
+}
+#update_todo {
+    padding: 25px;
+    margin: 10px;
+    background-color: #485F6E;
+}
