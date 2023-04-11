@@ -1,18 +1,55 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 from bson.objectid import ObjectId  # convert string IDs to ObjectId objects
 from pymongo import MongoClient
-
+import bcrypt
+#from venv.config import DB_PASSWORD
 
 app = Flask(__name__)
 
 
 #connect to database
 
-client = MongoClient("mongodb+srv://Gracie:GMLatlasdb23@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
-
+#client = MongoClient(f"mongodb+srv://Gracie:{DB_PASSWORD}@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
+client = MongoClient(f"mongodb+srv://Gracie:GMLatlasdb23@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
 db=client.mydb
 
 todos = db.todos
+
+
+# @app.route('/')
+# def index():
+#     if 'username' in session:
+#         return 'Welcome ' + session['username']
+
+#   return render_template('index.html')
+
+
+@app.route('/login', methods=['POST'])
+def login():
+
+    users = db.db.users
+    login_user = users.find_one({'name' : request.form['username']})
+
+    if login_user:
+        if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
+            session['username'] = request.form['username']
+            return redirect(url_for('index'))
+    return 'Invalid username or password'
+
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method== 'POST':
+        users= db.db.users
+        existing_user = users.find_one({'name': request.form['username']})
+
+        if existing_user is None:
+            hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
+            users.insert({'name':request.form['username'], 'password':hashpass})
+            session['username'] = request.form['username']
+            return redirect(url_for('index'))
+        return 'Username already in database'
+    return render_template('register.html')
 
 
 
@@ -35,6 +72,7 @@ def delete(id):
     todos.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('index'))
 
+
 #adding a new route that accepts GET and Post requests to update the todos
 @app.route('/<id>/update/', methods=('GET', 'POST'))
 def update(id):
@@ -48,7 +86,10 @@ def update(id):
 
 
 
-# #  PLAYING WITH THE APP
+
+
+
+# #  PLAYING WITH THE APP:
 # @app.route('/')
 # def hello_world():  # put application's code here
 #     return 'Hello World!'
@@ -76,4 +117,6 @@ def update(id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.secret_key = 'secretivekeyagain'
+    app.run(debug=True)
+
