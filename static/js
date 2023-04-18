@@ -1,0 +1,11 @@
+<script>
+    const todos = document.querySelectorAll('.todo');
+
+    todos.forEach(todo => {
+        if (todo.textContent.includes('(Important)')) {
+            todo.classList.add('important');
+        } else {
+            todo.classList.add('unimportant');
+        }
+    });
+</script>

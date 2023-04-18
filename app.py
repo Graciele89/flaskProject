@@ -3,6 +3,7 @@ from bson.objectid import ObjectId  # convert string IDs to ObjectId objects
 from pymongo import MongoClient
 import bcrypt
 #from venv.config import DB_PASSWORD
+import os
 
 app = Flask(__name__)
 
@@ -10,7 +11,8 @@ app = Flask(__name__)
 #connect to database
 
 #client = MongoClient(f"mongodb+srv://Gracie:{DB_PASSWORD}@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
-client = MongoClient(f"mongodb+srv://Gracie:GMLatlasdb23@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
+#client = MongoClient(f"mongodb+srv://Gracie:GMLatlasdb23@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
+client = MongoClient(f"mongodb+srv://Gracie:{os.getenv('DB_PASSWORD')}@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
 db=client.mydb
 
 todos = db.todos
@@ -29,9 +31,10 @@ def login():
 
     users = db.db.users
     login_user = users.find_one({'name' : request.form['username']})
-
+# first, find the user in the database through the username, using bcrypt.checkpw() to compare both pwd (using encoded UTF-8),
+ # if match redirects user to index page , if not return invalid  username pwd.
     if login_user:
-        if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
+        if bcrypt.checkpw(request.form['pass'].encode('utf-8'), login_user['password']):
             session['username'] = request.form['username']
             return redirect(url_for('index'))
     return 'Invalid username or password'
