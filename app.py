@@ -5,13 +5,13 @@ import bcrypt
 #from venv.config import DB_PASSWORD
 import os
 
+ # the name of the app
 app = Flask(__name__)
 
 
 #connect to database
 
-#client = MongoClient(f"mongodb+srv://Gracie:{DB_PASSWORD}@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
-#client = MongoClient(f"mongodb+srv://Gracie:GMLatlasdb23@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
+#client = MongoClient(f"mongodb+srv://my_userName:my_pwd@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
 client = MongoClient(f"mongodb+srv://Gracie:{os.getenv('DB_PASSWORD')}@cluster0.qhpicyw.mongodb.net/?retryWrites=true&w=majority")
 db=client.mydb
 

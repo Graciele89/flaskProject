@@ -8,16 +8,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Update Todo</title>
 </head>
+
+{# update the POST content, assigning a degree level and updating it #}
 <body>
+         {#   page header#}
     <h1 style="text-align: center" >Update Todo</h1>
+        <!-- Form for updating a todo -->
     <form method="POST" id="update_todo">
+        <!-- To Do content input field -->
         <p>
-            <b><label for="content">To Do content:</label></b>
+            <b><label for="content">To Do content :</label></b>
         </p>
         <p>
             <input type="text" name="content" value="{{ todo['content'] }}">
         </p>
-
+         <!-- Degree level radio buttons -->
         <p>
             <b><label for="degree">Degree level: </label></b>
         </p>
@@ -29,7 +34,7 @@
             <input id="degree-1" name="degree" required type="radio" value="Unimportant" {% if todo['degree'] == 'Unimportant' %} checked {% endif %}>
             <label for="degree-1">Unimportant</label>
         </p>
-
+         <!-- Submit button for updating the todo -->
         <button type="submit" class="btn btn-success" >Update todo</button>
     </form>
 </body>
